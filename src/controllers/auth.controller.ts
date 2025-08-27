@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config';
 import asyncHandler from '../libs/asyncHandle';
 import Token from '../models/Token';
+import User from '../models/User';
 
 // register user
 const register = asyncHandler(async (req, res) => {
@@ -16,7 +17,7 @@ const register = asyncHandler(async (req, res) => {
   }
 
   // check if user already exists
-  const userExists = await database.User.findOne({ number });
+  const userExists = await User.findOne({ number });
   if (userExists) {
     throw {
       status: 400,
@@ -24,7 +25,7 @@ const register = asyncHandler(async (req, res) => {
     };
   }
 
-  const user = await database.User.create({
+  const user = await User.create({
     number,
     password,
     database,
@@ -74,7 +75,7 @@ const login = asyncHandler(async (req, res) => {
   }
 
   // check if user exists
-  const user = await database.User.findOne({ number });
+  const user = await User.findOne({ number });
   if (!user) {
     throw {
       status: 400,
@@ -141,4 +142,22 @@ const logout = asyncHandler(async (req, res) => {
   });
 });
 
-export { login, logout, register };
+const getProfile = asyncHandler(async (req, res) => {
+  const { id } = req.user!;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    throw {
+      status: 400,
+      message: 'User does not exist',
+    };
+  }
+
+  res.status(200).json({
+    message: 'User profile fetched successfully',
+    user,
+  });
+});
+
+export { getProfile, login, logout, register };
