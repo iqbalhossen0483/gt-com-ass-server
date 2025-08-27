@@ -19,30 +19,37 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: false,
+      default: '',
     },
     profile: {
       type: String,
       required: false,
+      default: null,
     },
     balance: {
       type: Number,
       required: false,
+      default: 0,
     },
     debt: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalSale: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalDueSale: {
       type: Number,
       required: false,
+      default: 0,
     },
     totalDueCollection: {
       type: Number,
       required: false,
+      default: 0,
     },
   },
   {

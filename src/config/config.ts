@@ -11,6 +11,7 @@ interface Config {
   redisHost: string;
   redisPort: number;
   redisPassword: string;
+  tokenSecret: string;
 }
 
 const config: Config = {
@@ -27,6 +28,7 @@ const config: Config = {
   redisPort: Number(process.env.REDIS_PORT) || 12013,
   redisPassword:
     process.env.REDIS_PASSWORD || 'sOiI6YZF6BKxuZ1VUU5ixlBLerYOFsoK',
+  tokenSecret: process.env.JWT_SECRET || 'sOiI6YZF6BKxuZ1VUU5ixlBLerYOFsoK',
 };
 
 export default config;

@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+import config from '../config/config';
 import asyncHandler from '../libs/asyncHandle';
 
 // register user
@@ -27,9 +29,29 @@ const register = asyncHandler(async (req, res) => {
     database,
   });
 
+  // create token
+  const token = jwt.sign(
+    {
+      id: user._id,
+    },
+    config.tokenSecret,
+    {
+      expiresIn: '1d',
+    },
+  );
+
+  // set cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
   res.status(201).json({
     message: 'User created successfully',
     user,
+    token,
   });
 });
 
