@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
 import asyncHandler from '../libs/asyncHandle';
+import Token from '../models/Token';
 
 // register user
 const register = asyncHandler(async (req, res) => {
@@ -39,6 +40,12 @@ const register = asyncHandler(async (req, res) => {
       expiresIn: '1d',
     },
   );
+
+  // save the token in the database
+  await Token.create({
+    userId: user._id,
+    token,
+  });
 
   // set cookie
   res.cookie('token', token, {
@@ -94,6 +101,12 @@ const login = asyncHandler(async (req, res) => {
     },
   );
 
+  // save the token in the database
+  await Token.create({
+    userId: user._id,
+    token,
+  });
+
   // set cookie
   res.cookie('token', token, {
     httpOnly: true,
@@ -109,4 +122,23 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
-export { login, register };
+const logout = asyncHandler(async (req, res) => {
+  // check if user is logged in
+  if (!req.cookies.token) {
+    throw {
+      status: 400,
+      message: 'User is not logged in',
+    };
+  }
+
+  // make this token invalid
+  await Token.findOneAndDelete({ token: req.cookies.token });
+
+  // clear cookie
+  res.clearCookie('token');
+  res.status(200).json({
+    message: 'User logged out successfully',
+  });
+});
+
+export { login, logout, register };
