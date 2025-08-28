@@ -154,9 +154,35 @@ const getProfile = asyncHandler(async (req, res) => {
     };
   }
 
+  // create new token
+  const token = jwt.sign(
+    {
+      id: user._id,
+    },
+    config.tokenSecret,
+    {
+      expiresIn: '1d',
+    },
+  );
+
+  // save the token in the database
+  await Token.create({
+    userId: user._id,
+    token,
+  });
+
+  // set cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
   res.status(200).json({
     message: 'User profile fetched successfully',
     user,
+    token,
   });
 });
 
