@@ -6,10 +6,10 @@ import User from '../models/User';
 
 // register user
 const register = asyncHandler(async (req, res) => {
-  const { database, number, password } = req.body;
+  const { databaseId, number, password } = req.body;
 
   // check if all fields are filled
-  if (!database || !number || !password) {
+  if (!databaseId || !number || !password) {
     throw {
       status: 400,
       message: 'All fields are required',
@@ -28,7 +28,7 @@ const register = asyncHandler(async (req, res) => {
   const user = await User.create({
     number,
     password,
-    database,
+    databaseId,
   });
 
   // create token
@@ -60,14 +60,15 @@ const register = asyncHandler(async (req, res) => {
     message: 'User created successfully',
     user,
     token,
+    success: true,
   });
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { number, password, database } = req.body;
+  const { number, password, databaseId } = req.body;
 
   // check if all fields are filled
-  if (!database || !number || !password) {
+  if (!databaseId || !number || !password) {
     throw {
       status: 400,
       message: 'All fields are required',
@@ -75,7 +76,7 @@ const login = asyncHandler(async (req, res) => {
   }
 
   // check if user exists
-  const user = await User.findOne({ number });
+  const user = await User.findOne({ number, databaseId });
   if (!user) {
     throw {
       status: 400,
@@ -103,10 +104,17 @@ const login = asyncHandler(async (req, res) => {
   );
 
   // save the token in the database
-  await Token.create({
-    userId: user._id,
-    token,
-  });
+  await Token.findOneAndUpdate(
+    {
+      userId: user._id,
+    },
+    {
+      token,
+    },
+    {
+      upsert: true,
+    },
+  );
 
   // set cookie
   res.cookie('token', token, {
@@ -120,6 +128,7 @@ const login = asyncHandler(async (req, res) => {
     message: 'User logged in successfully',
     user,
     token,
+    success: true,
   });
 });
 
@@ -139,6 +148,7 @@ const logout = asyncHandler(async (req, res) => {
   res.clearCookie('token');
   res.status(200).json({
     message: 'User logged out successfully',
+    success: true,
   });
 });
 
@@ -166,10 +176,17 @@ const getProfile = asyncHandler(async (req, res) => {
   );
 
   // save the token in the database
-  await Token.create({
-    userId: user._id,
-    token,
-  });
+  await Token.findOneAndUpdate(
+    {
+      userId: user._id,
+    },
+    {
+      token,
+    },
+    {
+      upsert: true,
+    },
+  );
 
   // set cookie
   res.cookie('token', token, {
@@ -183,6 +200,7 @@ const getProfile = asyncHandler(async (req, res) => {
     message: 'User profile fetched successfully',
     user,
     token,
+    success: true,
   });
 });
 

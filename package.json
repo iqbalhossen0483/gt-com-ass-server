@@ -34,7 +34,9 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.9",
     "bull": "^4.16.5",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
