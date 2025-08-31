@@ -44,6 +44,7 @@ export const authenticationHandler = async (
     }
 
     req.user = decoded as JwtPayload & { id: string };
+    req.token = token;
     next();
   } catch (error) {
     next(error);

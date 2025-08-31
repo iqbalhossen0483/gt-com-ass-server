@@ -133,16 +133,17 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
-  // check if user is logged in
-  if (!req.cookies.token) {
+  const token = req.token;
+
+  if (!token) {
     throw {
-      status: 400,
+      status: 401,
       message: 'User is not logged in',
     };
   }
 
   // make this token invalid
-  await Token.findOneAndDelete({ token: req.cookies.token });
+  await Token.findOneAndDelete({ token });
 
   // clear cookie
   res.clearCookie('token');
