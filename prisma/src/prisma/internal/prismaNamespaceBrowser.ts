@@ -51,6 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Media: 'Media',
+  PlatformFee: 'PlatformFee',
+  ServiceOfferings: 'ServiceOfferings',
+  Specialist: 'Specialist',
   Token: 'Token',
   User: 'User'
 } as const
@@ -69,6 +73,68 @@ export const TransactionIsolationLevel = {
 } as const
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const MediaScalarFieldEnum = {
+  id: 'id',
+  specialist_id: 'specialist_id',
+  file_name: 'file_name',
+  file_size: 'file_size',
+  display_order: 'display_order',
+  mime_type: 'mime_type',
+  media_type: 'media_type',
+  uploaded_at: 'uploaded_at',
+  deleted_at: 'deleted_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
+
+
+export const PlatformFeeScalarFieldEnum = {
+  id: 'id',
+  tier_name: 'tier_name',
+  min_value: 'min_value',
+  max_value: 'max_value',
+  platform_fee_percentage: 'platform_fee_percentage',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type PlatformFeeScalarFieldEnum = (typeof PlatformFeeScalarFieldEnum)[keyof typeof PlatformFeeScalarFieldEnum]
+
+
+export const ServiceOfferingsScalarFieldEnum = {
+  id: 'id',
+  specialistId: 'specialistId',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type ServiceOfferingsScalarFieldEnum = (typeof ServiceOfferingsScalarFieldEnum)[keyof typeof ServiceOfferingsScalarFieldEnum]
+
+
+export const SpecialistScalarFieldEnum = {
+  id: 'id',
+  average_rating: 'average_rating',
+  is_draft: 'is_draft',
+  total_number_of_ratings: 'total_number_of_ratings',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  base_price: 'base_price',
+  platform_fee: 'platform_fee',
+  final_price: 'final_price',
+  verification_status: 'verification_status',
+  is_verified: 'is_verified',
+  duration_days: 'duration_days',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  deleted_at: 'deleted_at'
+} as const
+
+export type SpecialistScalarFieldEnum = (typeof SpecialistScalarFieldEnum)[keyof typeof SpecialistScalarFieldEnum]
 
 
 export const TokenScalarFieldEnum = {

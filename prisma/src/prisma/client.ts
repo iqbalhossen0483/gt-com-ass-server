@@ -27,8 +27,8 @@ export * from "./enums"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Tokens
- * const tokens = await prisma.token.findMany()
+ * // Fetch zero or more Media
+ * const media = await prisma.media.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -37,6 +37,26 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
+/**
+ * Model Media
+ * 
+ */
+export type Media = Prisma.MediaModel
+/**
+ * Model PlatformFee
+ * 
+ */
+export type PlatformFee = Prisma.PlatformFeeModel
+/**
+ * Model ServiceOfferings
+ * 
+ */
+export type ServiceOfferings = Prisma.ServiceOfferingsModel
+/**
+ * Model Specialist
+ * 
+ */
+export type Specialist = Prisma.SpecialistModel
 /**
  * Model Token
  * 

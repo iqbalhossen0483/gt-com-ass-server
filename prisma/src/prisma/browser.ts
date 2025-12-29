@@ -18,6 +18,26 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model Media
+ * 
+ */
+export type Media = Prisma.MediaModel
+/**
+ * Model PlatformFee
+ * 
+ */
+export type PlatformFee = Prisma.PlatformFeeModel
+/**
+ * Model ServiceOfferings
+ * 
+ */
+export type ServiceOfferings = Prisma.ServiceOfferingsModel
+/**
+ * Model Specialist
+ * 
+ */
+export type Specialist = Prisma.SpecialistModel
+/**
  * Model Token
  * 
  */

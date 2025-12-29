@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "enum Role {\n  ADMIN\n  USER\n  EDITOR\n  SUPER_ADMIN\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Token {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  token     String   @unique\n  createdAt DateTime @default(now())\n}\n\nmodel User {\n  id       Int        @id @default(autoincrement())\n  name     String?    @default(\"\")\n  email    String     @unique\n  password String\n  role     Role       @default(USER)\n  address  String?    @default(\"\")\n  status   UserStatus @default(ACTIVE)\n}\n",
+  "inlineSchema": "model Media {\n  id            String     @id @default(uuid())\n  specialist_id String\n  specialists   Specialist @relation(\"media_list\", fields: [specialist_id], references: [id])\n  file_name     String\n  file_size     Int\n  display_order Int\n  mime_type     MimeType\n  media_type    MediaType  @default(IMAGE)\n  uploaded_at   DateTime   @default(now())\n  deleted_at    DateTime?\n  created_at    DateTime   @default(now())\n  updated_at    DateTime   @updatedAt\n\n  @@map(\"media\")\n}\n\nenum MimeType {\n  IMAGE_PNG\n  IMAGE_JPEG\n  IMAGE_JPG\n}\n\nenum MediaType {\n  IMAGE\n  VIDEO\n  DOCUMENT\n  AUDIO\n}\n\nmodel PlatformFee {\n  id                      String   @id @default(uuid())\n  tier_name               String\n  min_value               Int      @default(0)\n  max_value               Int      @default(0)\n  platform_fee_percentage Decimal  @db.Decimal(5, 2)\n  created_at              DateTime @default(now())\n  updated_at              DateTime @updatedAt\n\n  @@map(\"platform_fees\")\n}\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel ServiceOfferings {\n  id           String     @id @default(uuid())\n  specialistId String\n  specialists  Specialist @relation(\"service_offerings\", fields: [specialistId], references: [id])\n  created_at   DateTime   @default(now())\n  updated_at   DateTime   @updatedAt\n\n  @@map(\"service_offerings\")\n}\n\nmodel Specialist {\n  id                      String             @id @default(uuid())\n  average_rating          Decimal            @default(0) @db.Decimal(5, 2)\n  is_draft                Boolean            @default(true)\n  total_number_of_ratings Int                @default(0)\n  title                   String\n  slug                    String             @unique\n  description             String?\n  base_price              Decimal            @db.Decimal(10, 2)\n  platform_fee            Decimal            @db.Decimal(10, 2)\n  final_price             Decimal            @db.Decimal(10, 2)\n  verification_status     VerificationStatus @default(PENDING)\n  is_verified             Boolean            @default(false)\n  duration_days           Int?\n  created_at              DateTime           @default(now())\n  updated_at              DateTime           @updatedAt\n  deleted_at              DateTime?\n  media                   Media[]            @relation(\"media_list\")\n  service_offerings       ServiceOfferings[] @relation(\"service_offerings\")\n\n  @@map(\"specialists\")\n}\n\nenum VerificationStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nmodel Token {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  token     String   @unique\n  createdAt DateTime @default(now())\n\n  @@map(\"tokens\")\n}\n\nmodel User {\n  id       Int        @id @default(autoincrement())\n  name     String?    @default(\"\")\n  email    String     @unique\n  password String\n  role     Role       @default(USER)\n  address  String?    @default(\"\")\n  status   UserStatus @default(ACTIVE)\n\n  @@map(\"users\")\n}\n\nenum Role {\n  ADMIN\n  USER\n  EDITOR\n  SUPER_ADMIN\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Token\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Media\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"specialist_id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"specialists\",\"kind\":\"object\",\"type\":\"Specialist\",\"relationName\":\"media_list\"},{\"name\":\"file_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"file_size\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"display_order\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"mime_type\",\"kind\":\"enum\",\"type\":\"MimeType\"},{\"name\":\"media_type\",\"kind\":\"enum\",\"type\":\"MediaType\"},{\"name\":\"uploaded_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deleted_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"media\"},\"PlatformFee\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tier_name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"min_value\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"max_value\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"platform_fee_percentage\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"platform_fees\"},\"ServiceOfferings\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"specialistId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"specialists\",\"kind\":\"object\",\"type\":\"Specialist\",\"relationName\":\"service_offerings\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"service_offerings\"},\"Specialist\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"average_rating\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"is_draft\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"total_number_of_ratings\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"base_price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"platform_fee\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"final_price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"verification_status\",\"kind\":\"enum\",\"type\":\"VerificationStatus\"},{\"name\":\"is_verified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"duration_days\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"created_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updated_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"deleted_at\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"media\",\"kind\":\"object\",\"type\":\"Media\",\"relationName\":\"media_list\"},{\"name\":\"service_offerings\",\"kind\":\"object\",\"type\":\"ServiceOfferings\",\"relationName\":\"service_offerings\"}],\"dbName\":\"specialists\"},\"Token\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"tokens\"},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"address\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"}],\"dbName\":\"users\"}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -58,8 +58,8 @@ export interface PrismaClientConstructor {
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Tokens
-   * const tokens = await prisma.token.findMany()
+   * // Fetch zero or more Media
+   * const media = await prisma.media.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -80,8 +80,8 @@ export interface PrismaClientConstructor {
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Tokens
- * const tokens = await prisma.token.findMany()
+ * // Fetch zero or more Media
+ * const media = await prisma.media.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -175,6 +175,46 @@ export interface PrismaClient<
   }>>
 
       /**
+   * `prisma.media`: Exposes CRUD operations for the **Media** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Media
+    * const media = await prisma.media.findMany()
+    * ```
+    */
+  get media(): Prisma.MediaDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.platformFee`: Exposes CRUD operations for the **PlatformFee** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PlatformFees
+    * const platformFees = await prisma.platformFee.findMany()
+    * ```
+    */
+  get platformFee(): Prisma.PlatformFeeDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.serviceOfferings`: Exposes CRUD operations for the **ServiceOfferings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceOfferings
+    * const serviceOfferings = await prisma.serviceOfferings.findMany()
+    * ```
+    */
+  get serviceOfferings(): Prisma.ServiceOfferingsDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.specialist`: Exposes CRUD operations for the **Specialist** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Specialists
+    * const specialists = await prisma.specialist.findMany()
+    * ```
+    */
+  get specialist(): Prisma.SpecialistDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
    * `prisma.token`: Exposes CRUD operations for the **Token** model.
     * Example usage:
     * ```ts

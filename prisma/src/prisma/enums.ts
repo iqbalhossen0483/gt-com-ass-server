@@ -9,6 +9,34 @@
 * 🟢 You can import this file directly.
 */
 
+export const MimeType = {
+  IMAGE_PNG: 'IMAGE_PNG',
+  IMAGE_JPEG: 'IMAGE_JPEG',
+  IMAGE_JPG: 'IMAGE_JPG'
+} as const
+
+export type MimeType = (typeof MimeType)[keyof typeof MimeType]
+
+
+export const MediaType = {
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+  DOCUMENT: 'DOCUMENT',
+  AUDIO: 'AUDIO'
+} as const
+
+export type MediaType = (typeof MediaType)[keyof typeof MediaType]
+
+
+export const VerificationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
+
+
 export const Role = {
   ADMIN: 'ADMIN',
   USER: 'USER',

@@ -8,6 +8,10 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Media'
+export type * from './models/PlatformFee'
+export type * from './models/ServiceOfferings'
+export type * from './models/Specialist'
 export type * from './models/Token'
 export type * from './models/User'
 export type * from './commonInputTypes'
