@@ -20,9 +20,6 @@ class RedisClient {
   constructor(options?: RedisConfig) {
     this.options = options || redisConfig;
     this.redis = new Redis(this.getRedisOptions());
-    this.redis.on('connect', () => {
-      console.log('Connected to Redis Cache Server');
-    });
   }
 
   private getRedisOptions(): RedisOptions {
@@ -31,10 +28,18 @@ class RedisClient {
       host,
       port,
       password,
-      maxRetriesPerRequest: null, // Prevents unnecessary retries
-      enableOfflineQueue: false, // Prevents queuing commands when Redis is down
       retryStrategy: (times: number): number => Math.min(times * 50, 2000), // Limit retries
     };
+  }
+
+  connect(): void {
+    this.redis.on('connect', () => {
+      console.log('Connected to Redis cache server');
+    });
+
+    this.redis.on('error', (error) => {
+      console.error('Redis connection error:', error);
+    });
   }
 
   // Method to set a key-value pair in Redis

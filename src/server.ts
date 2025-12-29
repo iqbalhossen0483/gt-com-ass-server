@@ -8,6 +8,8 @@ let server: Server;
 const startServer = async () => {
   server = app.listen(config.port, () => {
     console.log(`Server running on port ${config.port}`);
+    // Initialize Redis connection by referencing it
+    redis.connect();
   });
 };
 

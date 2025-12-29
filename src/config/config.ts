@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-dotenv.config({ path: process.env.DOTENV_CONFIG_PATH });
+dotenv.config();
 
 interface Config {
   port: number;
@@ -11,6 +11,11 @@ interface Config {
   redisPort: number;
   redisPassword: string;
   tokenSecret: string;
+  cloudinary: {
+    cloud_name: string;
+    api_key: string;
+    api_secret: string;
+  };
 }
 
 const config: Config = {
@@ -23,7 +28,12 @@ const config: Config = {
   redisHost: process.env.REDIS_HOST || 'localhost',
   redisPort: Number(process.env.REDIS_PORT) || 12013,
   redisPassword: process.env.REDIS_PASSWORD || '',
-  tokenSecret: process.env.JWT_SECRET || 'sOiI6YZF6BKxuZ1VUU5ixlBLerYOFsoK',
+  tokenSecret: process.env.JWT_SECRET || '',
+  cloudinary: {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
+    api_key: process.env.CLOUDINARY_API_KEY || '',
+    api_secret: process.env.CLOUDINARY_API_SECRET || '',
+  },
 };
 
 export default config;
