@@ -3,4 +3,5 @@ model Token {
   email     String    @unique
   token     String    @unique
   createdAt DateTime  @default(now())
+  @@map("tokens")
 }

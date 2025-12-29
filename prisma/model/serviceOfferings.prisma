@@ -1,0 +1,9 @@
+model ServiceOfferings {
+    id                      String      @id @default(uuid())
+    specialistId            String
+    specialists             Specialist  @relation("service_offerings", fields: [specialistId], references: [id])
+    created_at              DateTime    @default(now())
+    updated_at              DateTime    @updatedAt
+
+    @@map("service_offerings")
+}

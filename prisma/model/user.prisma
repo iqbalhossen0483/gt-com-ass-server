@@ -6,4 +6,17 @@ model User {
   role     Role        @default(USER)
   address  String?     @default("")
   status   UserStatus  @default(ACTIVE)
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  USER
+  EDITOR
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }

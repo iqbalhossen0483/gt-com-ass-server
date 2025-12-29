@@ -1,0 +1,28 @@
+model Specialist {
+  id                     String     @id @default(uuid()) 
+  average_rating         Decimal    @db.Decimal(5, 2) @default(0)
+  is_draft               Boolean    @default(true)
+  total_number_of_ratings Int       @default(0)
+  title                  String
+  slug                   String     @unique
+  description            String?
+  base_price             Decimal    @db.Decimal(10, 2)
+  platform_fee           Decimal    @db.Decimal(10, 2)
+  final_price            Decimal    @db.Decimal(10, 2)
+  verification_status    VerificationStatus  @default(PENDING)
+  is_verified            Boolean    @default(false)
+  duration_days          Int?
+  created_at             DateTime   @default(now())
+  updated_at             DateTime   @updatedAt
+  deleted_at             DateTime?
+  media                  Media[]    @relation("media_list")
+  service_offerings      ServiceOfferings[] @relation("service_offerings")
+    
+  @@map("specialists")
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

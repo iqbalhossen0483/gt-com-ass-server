@@ -1,0 +1,30 @@
+model Media {
+  id            String     @id @default(uuid())
+  specialist_id String     
+  specialists   Specialist  @relation("media_list", fields: [specialist_id], references: [id])
+  file_name     String
+  file_size     Int
+  display_order Int
+  mime_type     MimeType  
+  media_type    MediaType   @default(IMAGE)
+  uploaded_at   DateTime    @default(now())
+  deleted_at    DateTime?
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  @@map("media")
+}
+
+enum MimeType {
+  IMAGE_PNG
+  IMAGE_JPEG
+  IMAGE_JPG
+}
+
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  AUDIO
+}
