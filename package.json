@@ -9,7 +9,7 @@
     "lint": "eslint 'src/**/*.ts'",
     "test:watch": "jest --watch",
     "build": "tsc",
-    "test": "cross-env DOTENV_CONFIG_PATH=.env jest",
+    "test": "cross-env DOTENV_CONFIG_PATH=.env jest --detectOpenHandles",
     "docker-build": "sudo docker build -t rkb-business-server .",
     "docker-rebuild": "sudo docker build --no-cache -t rkb-business-server .",
     "docker-run": "sudo docker run --rm -p 8080:8080 --env-file .env rkb-business-server"

@@ -45,10 +45,10 @@ const register = asyncHandler(async (req, res) => {
 
   // save the token in the database
   await prisma.token.upsert({
-    where: { userId: user.id },
+    where: { email: user.email },
     update: { token },
     create: {
-      userId: user.id,
+      email: user.email,
       token,
     },
   });
@@ -88,6 +88,14 @@ const login = asyncHandler(async (req, res) => {
     };
   }
 
+  // check if user is active
+  if (user.status === 'INACTIVE') {
+    throw {
+      status: 400,
+      message: 'You are suspended. Please contact support.',
+    };
+  }
+
   // check if password is correct
   if (user.password !== password) {
     throw {
@@ -110,10 +118,10 @@ const login = asyncHandler(async (req, res) => {
 
   // save the token in the database
   await prisma.token.upsert({
-    where: { userId: user.id },
+    where: { email: user.email },
     update: { token },
     create: {
-      userId: user.id,
+      email: user.email,
       token,
     },
   });
@@ -180,10 +188,10 @@ const getProfile = asyncHandler(async (req, res) => {
 
   // save the token in the database
   await prisma.token.upsert({
-    where: { userId: user.id },
+    where: { email: user.email },
     update: { token },
     create: {
-      userId: user.id,
+      email: user.email,
       token,
     },
   });
@@ -204,4 +212,3 @@ const getProfile = asyncHandler(async (req, res) => {
 });
 
 export { getProfile, login, logout, register };
-``;

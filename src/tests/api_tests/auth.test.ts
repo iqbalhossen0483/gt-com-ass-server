@@ -4,6 +4,7 @@ import { prisma } from '../../libs/prisma';
 
 afterEach(async () => {
   await prisma.user.delete({ where: { email: 'test@gmail.com' } });
+  await prisma.token.delete({ where: { email: 'test@gmail.com' } });
 });
 
 describe('Auth API', () => {
