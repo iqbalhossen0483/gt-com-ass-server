@@ -1,23 +1,24 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
 import asyncHandler from '../libs/asyncHandle';
+import { prisma } from '../libs/prisma';
 import Token from '../models/Token';
 import User from '../models/User';
 
 // register user
 const register = asyncHandler(async (req, res) => {
-  const { databaseId, number, password } = req.body;
+  const { email, password } = req.body;
 
   // check if all fields are filled
-  if (!databaseId || !number || !password) {
+  if (!email || !password) {
     throw {
       status: 400,
-      message: 'All fields are required',
+      message: 'Required fields are missing',
     };
   }
 
   // check if user already exists
-  const userExists = await User.findOne({ number });
+  const userExists = await prisma.user.findUnique({ where: { email } });
   if (userExists) {
     throw {
       status: 400,
@@ -25,16 +26,18 @@ const register = asyncHandler(async (req, res) => {
     };
   }
 
-  const user = await User.create({
-    number,
-    password,
-    databaseId,
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password,
+    },
   });
 
   // create token
   const token = jwt.sign(
     {
-      id: user._id,
+      id: user.id,
+      role: user.role,
     },
     config.tokenSecret,
     {
@@ -43,9 +46,13 @@ const register = asyncHandler(async (req, res) => {
   );
 
   // save the token in the database
-  await Token.create({
-    userId: user._id,
-    token,
+  await prisma.token.upsert({
+    where: { userId: user.id },
+    update: { token },
+    create: {
+      userId: user.id,
+      token,
+    },
   });
 
   // set cookie
@@ -65,18 +72,18 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { number, password, databaseId } = req.body;
+  const { email, password } = req.body;
 
   // check if all fields are filled
-  if (!databaseId || !number || !password) {
+  if (!email || !password) {
     throw {
       status: 400,
-      message: 'All fields are required',
+      message: 'Required fields are missing',
     };
   }
 
   // check if user exists
-  const user = await User.findOne({ number, databaseId });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw {
       status: 400,
@@ -88,14 +95,15 @@ const login = asyncHandler(async (req, res) => {
   if (user.password !== password) {
     throw {
       status: 400,
-      message: 'Incorrect password',
+      message: 'Invalid credentials',
     };
   }
 
   // create token
   const token = jwt.sign(
     {
-      id: user._id,
+      id: user.id,
+      role: user.role,
     },
     config.tokenSecret,
     {
@@ -104,17 +112,14 @@ const login = asyncHandler(async (req, res) => {
   );
 
   // save the token in the database
-  await Token.findOneAndUpdate(
-    {
-      userId: user._id,
-    },
-    {
+  await prisma.token.upsert({
+    where: { userId: user.id },
+    update: { token },
+    create: {
+      userId: user.id,
       token,
     },
-    {
-      upsert: true,
-    },
-  );
+  });
 
   // set cookie
   res.cookie('token', token, {
@@ -205,4 +210,14 @@ const getProfile = asyncHandler(async (req, res) => {
   });
 });
 
-export { getProfile, login, logout, register };
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany();
+
+  res.status(200).json({
+    message: 'Users fetched successfully',
+    users,
+    success: true,
+  });
+});
+
+export { getProfile, getUsers, login, logout, register };

@@ -16,6 +16,7 @@ interface Config {
     api_key: string;
     api_secret: string;
   };
+  databaseUrl: string;
 }
 
 const config: Config = {
@@ -34,6 +35,7 @@ const config: Config = {
     api_key: process.env.CLOUDINARY_API_KEY || '',
     api_secret: process.env.CLOUDINARY_API_SECRET || '',
   },
+  databaseUrl: process.env.DATABASE_URL || '',
 };
 
 export default config;
