@@ -1,25 +1,15 @@
-import mongoose from 'mongoose';
 import supertest from 'supertest';
 import app from '../../app';
-import User from '../../models/User';
-
-beforeAll(async () => {
-  // await connectDB();
-});
+import { prisma } from '../../libs/prisma';
 
 afterEach(async () => {
-  await User.deleteOne({ number: '01853860385' });
-});
-
-afterAll(async () => {
-  await mongoose.connection.close();
+  await prisma.user.delete({ where: { email: 'test@gmail.com' } });
 });
 
 describe('Auth API', () => {
   const userData = {
-    databaseId: new mongoose.Types.ObjectId(),
-    number: '01853860385',
-    password: 'password',
+    email: 'test@gmail.com',
+    password: 'Test@123',
   };
 
   it('should register a user', async () => {
@@ -27,49 +17,55 @@ describe('Auth API', () => {
       .post('/api/auth/register')
       .send(userData);
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty('user');
+    expect(response.body).toHaveProperty(
+      'message',
+      'User created successfully',
+    );
   });
 
   it('should login a user', async () => {
     await supertest(app).post('/api/auth/register').send(userData);
-    const response = await supertest(app).post('/api/auth/login').send({
-      databaseId: userData.databaseId.toHexString(),
-      number: userData.number,
-      password: userData.password,
-    });
+    const response = await supertest(app)
+      .post('/api/auth/login')
+      .send(userData);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('token');
+    expect(response.body).toHaveProperty(
+      'message',
+      'User logged in successfully',
+    );
   });
 
   it('should logout a user', async () => {
     await supertest(app).post('/api/auth/register').send(userData);
-    const loginResponse = await supertest(app).post('/api/auth/login').send({
-      databaseId: userData.databaseId.toHexString(),
-      number: userData.number,
-      password: userData.password,
-    });
+    const loginResponse = await supertest(app)
+      .post('/api/auth/login')
+      .send(userData);
 
     const response = await supertest(app)
       .post('/api/auth/logout')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${loginResponse.body.data.token}`)
       .send({});
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('message');
+    expect(response.body).toHaveProperty(
+      'message',
+      'User logged out successfully',
+    );
   });
 
   it('should get user profile', async () => {
     await supertest(app).post('/api/auth/register').send(userData);
-    const loginResponse = await supertest(app).post('/api/auth/login').send({
-      databaseId: userData.databaseId.toHexString(),
-      number: userData.number,
-      password: userData.password,
-    });
+    const loginResponse = await supertest(app)
+      .post('/api/auth/login')
+      .send(userData);
 
     const response = await supertest(app)
       .get('/api/auth/get-profile')
-      .set('Authorization', `Bearer ${loginResponse.body.token}`)
+      .set('Authorization', `Bearer ${loginResponse.body.data.token}`)
       .send();
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('user');
+    expect(response.body).toHaveProperty(
+      'message',
+      'User profile fetched successfully',
+    );
   });
 });

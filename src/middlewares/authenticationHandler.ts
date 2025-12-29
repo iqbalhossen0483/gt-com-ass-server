@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import config from '../config/config';
-import Token from '../models/Token';
+import { prisma } from '../libs/prisma';
 
 export const authenticationHandler = async (
   req: Request,
@@ -35,7 +35,9 @@ export const authenticationHandler = async (
     }
 
     // check is it a our system generated valid token
-    const tokenExists = await Token.findOne({ token });
+    const tokenExists = await prisma.token.findUnique({
+      where: { token },
+    });
     if (!tokenExists) {
       throw {
         status: 401,

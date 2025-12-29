@@ -2,8 +2,6 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config';
 import asyncHandler from '../libs/asyncHandle';
 import { prisma } from '../libs/prisma';
-import Token from '../models/Token';
-import User from '../models/User';
 
 // register user
 const register = asyncHandler(async (req, res) => {
@@ -65,8 +63,7 @@ const register = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     message: 'User created successfully',
-    user,
-    token,
+    data: { user, token },
     success: true,
   });
 });
@@ -131,8 +128,7 @@ const login = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: 'User logged in successfully',
-    user,
-    token,
+    data: { user, token },
     success: true,
   });
 });
@@ -148,7 +144,7 @@ const logout = asyncHandler(async (req, res) => {
   }
 
   // make this token invalid
-  await Token.findOneAndDelete({ token });
+  await prisma.token.delete({ where: { token } });
 
   // clear cookie
   res.clearCookie('token');
@@ -161,7 +157,7 @@ const logout = asyncHandler(async (req, res) => {
 const getProfile = asyncHandler(async (req, res) => {
   const { id } = req.user!;
 
-  const user = await User.findById(id);
+  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
 
   if (!user) {
     throw {
@@ -173,7 +169,8 @@ const getProfile = asyncHandler(async (req, res) => {
   // create new token
   const token = jwt.sign(
     {
-      id: user._id,
+      id: user.id,
+      role: user.role,
     },
     config.tokenSecret,
     {
@@ -182,17 +179,14 @@ const getProfile = asyncHandler(async (req, res) => {
   );
 
   // save the token in the database
-  await Token.findOneAndUpdate(
-    {
-      userId: user._id,
-    },
-    {
+  await prisma.token.upsert({
+    where: { userId: user.id },
+    update: { token },
+    create: {
+      userId: user.id,
       token,
     },
-    {
-      upsert: true,
-    },
-  );
+  });
 
   // set cookie
   res.cookie('token', token, {
@@ -204,20 +198,10 @@ const getProfile = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: 'User profile fetched successfully',
-    user,
-    token,
+    data: { user, token },
     success: true,
   });
 });
 
-const getUsers = asyncHandler(async (req, res) => {
-  const users = await prisma.user.findMany();
-
-  res.status(200).json({
-    message: 'Users fetched successfully',
-    users,
-    success: true,
-  });
-});
-
-export { getProfile, getUsers, login, logout, register };
+export { getProfile, login, logout, register };
+``;
