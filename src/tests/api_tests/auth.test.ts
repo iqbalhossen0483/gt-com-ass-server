@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 import app from '../../app';
-import { connectDB } from '../../config/mongoose';
 import User from '../../models/User';
 
 beforeAll(async () => {
-  await connectDB();
+  // await connectDB();
 });
 
 afterEach(async () => {

@@ -7,7 +7,6 @@ interface Config {
   nodeEnv: string;
   apiPrefix: string;
   corsOrigin: string[];
-  mongoUrl: string;
   redisHost: string;
   redisPort: number;
   redisPassword: string;
@@ -21,13 +20,9 @@ const config: Config = {
   corsOrigin: process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',')
     : ['http://localhost:3000'],
-  mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017',
-  redisHost:
-    process.env.REDIS_HOST ||
-    'redis-12013.c8.us-east-1-4.ec2.redns.redis-cloud.com',
+  redisHost: process.env.REDIS_HOST || 'localhost',
   redisPort: Number(process.env.REDIS_PORT) || 12013,
-  redisPassword:
-    process.env.REDIS_PASSWORD || 'sOiI6YZF6BKxuZ1VUU5ixlBLerYOFsoK',
+  redisPassword: process.env.REDIS_PASSWORD || '',
   tokenSecret: process.env.JWT_SECRET || 'sOiI6YZF6BKxuZ1VUU5ixlBLerYOFsoK',
 };
 

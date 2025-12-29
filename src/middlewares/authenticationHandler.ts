@@ -34,7 +34,7 @@ export const authenticationHandler = async (
       };
     }
 
-    // check is it a blacklisted token
+    // check is it a our system generated valid token
     const tokenExists = await Token.findOne({ token });
     if (!tokenExists) {
       throw {
@@ -43,7 +43,7 @@ export const authenticationHandler = async (
       };
     }
 
-    req.user = decoded as JwtPayload & { id: string };
+    req.user = decoded as JwtPayload & TokenPayload;
     req.token = token;
     next();
   } catch (error) {

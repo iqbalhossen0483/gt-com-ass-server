@@ -28,7 +28,7 @@ app.use(createRateLimiter(100));
 // Routes
 const apiPrefix = config.apiPrefix;
 app.get('/', (_req, res) => {
-  res.status(200).json({ message: 'The RKB Business Server is running' });
+  res.status(200).json({ message: 'The API Server is running' });
 });
 app.use(apiPrefix, apiRoutes);
 
